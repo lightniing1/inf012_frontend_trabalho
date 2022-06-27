@@ -20,16 +20,16 @@ export default function Costumers() {
 
     useEffect(()=>{
 
-        async function loadClientes(uid) {
-          const response = await fetch("http://127.0.0.1:8080/cliente/" + uid);
-          const json = await response.json();
-          setClientes(json)
-            
-        }
-
         loadClientes(uid)
         
     },[]);
+
+    async function loadClientes(uid) {
+        const response = await fetch("http://127.0.0.1:8080/cliente/" + uid);
+        const json = await response.json();
+        setClientes(json)
+          
+      }
 
     async function handleUpdate(e, id){
         
@@ -56,10 +56,8 @@ export default function Costumers() {
         }
     
         const response_update = await fetch("http://127.0.0.1:8080/cliente/" + uid + "/" + id, request)
-        const data_update = await response_update.json();
-    
         if(response_update.ok){
-            setClientes([...clientes, data_update])
+            loadClientes(uid)
         }
     
       }

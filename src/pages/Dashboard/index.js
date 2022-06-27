@@ -1,16 +1,17 @@
 
 import './dashboard.css';
-import { useState, useEffect, useContext } from 'react';
+import { useState, useEffect, useContext, useLocation } from 'react';
 import Header from '../../components/Header';
 import Title from '../../components/Title';
 import { FiMessageSquare, FiPlus, FiSearch, FiEdit2 } from 'react-icons/fi';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../contexts/auth';
 
 export default function Dashboard(){
   const [chamados, setChamados] = useState([]);
   const { loggedUser } = useContext(AuthContext);
   const [uid] = useState(loggedUser && loggedUser.uid);
+  const navigate = useNavigate();
 
   useEffect(()=>{
 
@@ -24,6 +25,15 @@ export default function Dashboard(){
     loadChamados(uid)
     
 },[]);
+
+    const redirect = (chamadoid) => {
+        navigate('/new', {
+            state: {
+                chamado_id: chamadoid,
+                update: true
+            }
+        });
+    }
 
   return(
     <div>
@@ -74,8 +84,8 @@ export default function Dashboard(){
                     <button className="action" style={{backgroundColor: '#3583f6' }}>
                       <FiSearch color="#FFF" size={17} />
                     </button>
-                    <button className="action" style={{backgroundColor: '#F6a935' }}>
-                      <FiEdit2 color="#FFF" size={17} />
+                    <button className="action" onClick={() => redirect(chamado.id)} style={{backgroundColor: '#F6a935' }}>
+                      <FiEdit2 color="#FFF"  size={17} />
                     </button>
                   </td>
                 </tr>

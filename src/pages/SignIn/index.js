@@ -8,7 +8,7 @@ import { toast } from 'react-toastify';
 function SignIn() {
     const [email, setEmail]=useState('');
     const [senha, setSenha]=useState('');
-    const {signIn, loading, setLoading, setLocalUser, loggedUser} = useContext(AuthContext);
+    const {signIn, loading, setLoading} = useContext(AuthContext);
     const history = useNavigate();
 
     async function handleSubmit(e){

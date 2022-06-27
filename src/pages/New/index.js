@@ -6,6 +6,7 @@ import { toast } from 'react-toastify';
 import './new.css';
 import firebase from '../../services/firebaseConnection';
 import { AuthContext } from '../../contexts/auth';
+import {useLocation} from 'react-router-dom';
 
 export default function New() {
 
@@ -17,6 +18,13 @@ export default function New() {
     const [complemento, setComplemento] = useState('');
     const { loggedUser } = useContext(AuthContext);
     const [uid] = useState(loggedUser && loggedUser.uid);
+    const location = useLocation();
+
+    //Retorna null se não foi clicado do dashbaord
+    if (location.state !== null) {
+        console.log(location.state.chamado_id)
+        console.log(location.state.update)
+    }
 
 
     useEffect(()=>{
@@ -52,7 +60,7 @@ export default function New() {
         const data = await response.json();
 
         if (response.ok) {
-            console.log("Chamado postado")
+            toast.success("Chamado registrado")
         }
        
     }
