@@ -1,13 +1,30 @@
 
 import './dashboard.css';
-import { useState } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import Header from '../../components/Header';
 import Title from '../../components/Title';
 import { FiMessageSquare, FiPlus, FiSearch, FiEdit2 } from 'react-icons/fi';
 import { Link } from 'react-router-dom';
+import { AuthContext } from '../../contexts/auth';
 
 export default function Dashboard(){
-  const [chamados, setChamados] = useState([1]);
+  const [chamados, setChamados] = useState([]);
+  const { loggedUser } = useContext(AuthContext);
+  const [uid] = useState(loggedUser && loggedUser.uid);
+
+  useEffect(()=>{
+
+    async function loadChamados(uid) {
+      const response = await fetch("http://127.0.0.1:8080/chamado/" + uid);
+      const json = await response.json();
+      setChamados(json)
+        
+    }
+
+    loadChamados(uid)
+    
+},[]);
+
   return(
     <div>
       <Header/>
@@ -44,11 +61,13 @@ export default function Dashboard(){
                 </tr>
               </thead>
               <tbody>
-                <tr>
-                  <td data-label="Cliente">Sujeito</td>
-                  <td data-label="Assunto">Suporte</td>
+                {chamados.map((chamado, index) => {
+                  return (
+                <tr key={index}>
+                  <td data-label="Cliente">{chamado.nome_cliente}</td>
+                  <td data-label="Assunto">{chamado.assunto}</td>
                   <td data-label="Status">
-                    <span className="badge" style={{backgroundColor: '#5cb85c' }}>Em aberto</span>
+                    <span className="badge" style={{backgroundColor: '#5cb85c' }}>{chamado.status}</span>
                   </td>
                   <td data-label="Cadastrado">20/06/2021</td>
                   <td data-label="#">
@@ -60,6 +79,8 @@ export default function Dashboard(){
                     </button>
                   </td>
                 </tr>
+                )
+              })}
               </tbody>
             </table>
           </>
