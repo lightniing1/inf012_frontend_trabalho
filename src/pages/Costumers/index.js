@@ -12,8 +12,11 @@ export default function Costumers() {
     const [cnpj, setCnpj] = useState('');
     const [endereco, setEndereco] = useState('');
     const [clientes, setClientes] = useState([]);
+    const [edicao, setEdicao] = useState(false);
+    const [clienteId, setClienteId] = useState('');
     const { loggedUser } = useContext(AuthContext);
     const [uid] = useState(loggedUser && loggedUser.uid);
+    const [textoBotao, setTextoBotao] = useState('Salvar')
 
     useEffect(()=>{
 
@@ -28,17 +31,51 @@ export default function Costumers() {
         
     },[]);
 
+    async function handleUpdate(e, id){
+        
+        setEdicao(false)
+        setTextoBotao("Salvar")
+
+        e.preventDefault();
+
+        const response = await fetch("http://127.0.0.1:8080/cliente/" + uid + "/" + id);
+        const data = await response.json();
+    
+        const update = {
+            ...data, 
+            nome: nome,
+            cnpj: cnpj,
+            endereco: endereco
+        }
+
+        console.log(update)
+    
+        const request = {
+            mode: 'cors',
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(update)
+        }
+    
+        const response_update = await fetch("http://127.0.0.1:8080/cliente/" + uid + "/" + id, request)
+        const data_update = await response_update.json();
+    
+        if(response_update.ok){
+            console.log("Atualizado")
+            console.log(data_update)
+        }
+    
+      }
+
     async function handleSubmit(e){
 
         e.preventDefault();
-        const hoje = new Date()
-        const dataCadastro = hoje.getDate()+'/'+(hoje.getMonth()+1)+'/'+hoje.getFullYear()
-        
+      
         const request = {
             mode: 'cors',
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({"nome": nome, "cnpj": cnpj, "endereco": endereco, "dataCadastro": dataCadastro})
+            body: JSON.stringify({"nome": nome, "cnpj": cnpj, "endereco": endereco})
         }
 
         const response = await fetch("http://127.0.0.1:8080/cliente/" + uid, request)
@@ -46,6 +83,7 @@ export default function Costumers() {
 
         if (response.ok) {
             setClientes([...clientes, data])
+            toast.success("Cliente cadastrado com sucesso!")
         }
         
     }
@@ -60,9 +98,19 @@ export default function Costumers() {
         const response = await fetch("http://127.0.0.1:8080/cliente/" + uid + "/" + id, request)
         if (response.ok) {
             setClientes(clientes.filter((cliente) => cliente.id !== id))
+            toast.success("Cliente excluído")
         }
     
      }
+
+    function edita(id, nome, endereco, cnpj) {
+        setNome(nome);
+        setEndereco(endereco);
+        setCnpj(cnpj);
+        setClienteId(id);
+        setEdicao(true);
+        setTextoBotao('Editar')
+    }
 
     return (
         <div>
@@ -75,7 +123,7 @@ export default function Costumers() {
 
 
                 <div className="container">
-                    <form onSubmit={(e)=>{handleSubmit(e)}} className="form-profile costumers">
+                    <form onSubmit={edicao === true ? (e)=>{handleUpdate(e, clienteId)} : (e)=>{handleSubmit(e)}} className="form-profile costumers">
                         <label>Nome</label>
                         <input placeholder="Digite o Nome Fantasia" type="text" value={nome} onChange={(e) => setNome(e.target.value)} />
 
@@ -85,7 +133,7 @@ export default function Costumers() {
                         <label>Endereço</label>
                         <input placeholder="Digite o seu Endereço" type="text" value={endereco} onChange={(e) => { setEndereco(e.target.value) }} />
 
-                        <button className="button-costumers" type="submit">Salvar</button>
+                        <button className="button-costumers" type="submit">{textoBotao}</button>
                     </form>
                 </div>
                 <table>
@@ -110,7 +158,7 @@ export default function Costumers() {
                           <button onClick={()=>{excluir(cliente.id)}} className="action" style={{backgroundColor: '#3583f6' }}>
                             <FiDelete color="#FFF" size={17} />
                           </button>
-                          <button className="action" style={{backgroundColor: '#F6a935' }}>
+                          <button onClick={() => edita(cliente.id, cliente.nome, cliente.endereco, cliente.cnpj)}className="action" style={{backgroundColor: '#F6a935' }}>
                             <FiEdit2 color="#FFF" size={17} />
                           </button>
                         </td>
