@@ -26,11 +26,15 @@ export default function Dashboard(){
     
 },[]);
 
-    const redirect = (chamadoid) => {
+    const redirect = (chamado, update) => {
         navigate('/new', {
             state: {
-                chamado_id: chamadoid,
-                update: true
+                assunto: chamado.assunto,
+                status: chamado.status,
+                complemento: chamado.complemento,
+                cliente_id: chamado.cliente_id,
+                chamado_id: chamado.id,
+                update: update
             }
         });
     }
@@ -81,10 +85,10 @@ export default function Dashboard(){
                   </td>
                   <td data-label="Cadastrado">20/06/2021</td>
                   <td data-label="#">
-                    <button className="action" style={{backgroundColor: '#3583f6' }}>
+                    <button className="action" onClick={() => redirect(chamado, false)} style={{backgroundColor: '#3583f6' }}>
                       <FiSearch color="#FFF" size={17} />
                     </button>
-                    <button className="action" onClick={() => redirect(chamado.id)} style={{backgroundColor: '#F6a935' }}>
+                    <button className="action" onClick={() => redirect(chamado, true)} style={{backgroundColor: '#F6a935' }}>
                       <FiEdit2 color="#FFF"  size={17} />
                     </button>
                   </td>
