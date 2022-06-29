@@ -59,7 +59,8 @@ export default function Profile(){
     //const data_update = await response_update.json();
 
     if(response_update.ok){
-        console.log("Atualizado")
+        //console.log("Atualizado")
+        toast.success("Nome atualizado")
         //console.log(data_update)
     }
 
@@ -80,11 +81,14 @@ export default function Profile(){
       }
 
     const response = await fetch("http://127.0.0.1:8080/usuario/profile-picture/" + uid, request)
-    //const data = await response.json();
+    const response_update = await fetch("http://127.0.0.1:8080/usuario/profile-picture/" + uid)
+    const data_update = await response_update.json();
 
-    if(response.ok){
-      console.log("Upload realizado")
-  }
+    if(response.ok){ 
+      //console.log("Upload realizado")
+      toast.success("Upload realizado")
+      setAvatarUrl("http://127.0.0.1:8080/static/" + data_update.profile_pic)
+    }
 
   }
 

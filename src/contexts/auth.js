@@ -10,6 +10,8 @@ function AuthProvider({ children }) {
     const [user, setUser] = useState(null);
     const [loggedUser, setLoggedUser] = useState({});
     const [loading, setLoading] = useState(false);
+    const [uid_user, setUid_user] = useState(loggedUser && loggedUser.uid);
+    const [avatarUrl, setAvatarUrl] = useState('');
 
     /*
     useEffect(() => {
@@ -33,6 +35,7 @@ function AuthProvider({ children }) {
                         {
                             uid: user.uid,
                             email: user.email,
+                            avatarUrl: null
                         }
                     )
                 } else {
@@ -85,8 +88,12 @@ function AuthProvider({ children }) {
 
         const response = await fetch("http://127.0.0.1:8080/usuario/", request)
         const data = await response.json()
-        console.log(data)
+        //console.log(data)
       }
+
+    async function loadAvatar(uid) {
+        
+    }
 
     return (
         <AuthContext.Provider value={{
@@ -101,7 +108,8 @@ function AuthProvider({ children }) {
             setLocalUser,
             loggedUser,
             setLoggedUser,
-            registerUserOnBackend
+            registerUserOnBackend,
+            avatarUrl
         }}>
             {children}
         </AuthContext.Provider>
