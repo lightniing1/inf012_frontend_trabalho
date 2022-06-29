@@ -8,6 +8,24 @@ import { useState, useContext } from 'react';
 function Header() {
 
     const { loggedUser } = useContext(AuthContext);
+    const [avatarUrl, setAvatarUrl] = useState(null);
+    
+    async function exibeImagem(uid) {
+
+        const response_update = await fetch("http://127.0.0.1:8080/usuario/profile-picture/" + uid)
+        const data_update = await response_update.json();
+    
+        if(response_update.ok){ 
+          //loadAvatar(data_update.profile_pic)
+          setAvatarUrl("")
+          setAvatarUrl("http://127.0.0.1:8080/static/" + data_update.profile_pic)
+          return true
+        } else {
+          setAvatarUrl(null)
+          return false
+        }
+    
+      }
 
     const labelLoggedUser = {
         color: 'white',
@@ -16,7 +34,7 @@ function Header() {
     return (
         <div className="sidebar">
             <div>
-                <img alt="Foto Avatar" src={avatar} />
+                <img alt="Foto Avatar" src={exibeImagem(loggedUser.uid) ? avatarUrl : avatarUrl} />
                 <label style={labelLoggedUser}>{loggedUser.email}</label>
             </div>
             <Link to="/dashboard">

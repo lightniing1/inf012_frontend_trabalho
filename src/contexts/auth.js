@@ -11,8 +11,6 @@ function AuthProvider({ children }) {
     const [loggedUser, setLoggedUser] = useState({});
     const [loading, setLoading] = useState(false);
     const [uid_user, setUid_user] = useState(loggedUser && loggedUser.uid);
-    const [avatarUrl, setAvatarUrl] = useState('');
-
     /*
     useEffect(() => {
         function loadUser() {
@@ -35,7 +33,6 @@ function AuthProvider({ children }) {
                         {
                             uid: user.uid,
                             email: user.email,
-                            avatarUrl: null
                         }
                     )
                 } else {
@@ -43,9 +40,10 @@ function AuthProvider({ children }) {
                     }
                 })
             }
-
+            /*
+            
+            */
     checkLogin();
-
     }, [])
 
     function signUp(email, password, nome) {
@@ -90,11 +88,14 @@ function AuthProvider({ children }) {
         const data = await response.json()
         //console.log(data)
       }
-
-    async function loadAvatar(uid) {
-        
+/*
+      async function loadAvatar(uid) {
+        console.log("loadavatar")
+        const response = await fetch ("http://127.0.0.1:8080/usuario/profile-picture/" + uid)
+        const data_update = await response.json();
+        setAvatarUrl("http://127.0.0.1:8080/static/profile-pic-"+data_update.profile_pic)
     }
-
+*/
     return (
         <AuthContext.Provider value={{
             signed: !!user,
@@ -108,8 +109,7 @@ function AuthProvider({ children }) {
             setLocalUser,
             loggedUser,
             setLoggedUser,
-            registerUserOnBackend,
-            avatarUrl
+            registerUserOnBackend
         }}>
             {children}
         </AuthContext.Provider>

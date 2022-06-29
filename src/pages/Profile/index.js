@@ -11,31 +11,27 @@ import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom'
 
 export default function Profile(){
-  const { loggedUser, logout} = useContext(AuthContext);
+  const { loggedUser, loadAvatar, logout} = useContext(AuthContext);
   const [nome, setNome] = useState('');
   const [email] = useState(loggedUser && loggedUser.email);
   const [uid] = useState(loggedUser && loggedUser.uid);
-  const [avatarUrl, setAvatarUrl] = useState(loggedUser && loggedUser.avatarUrl);
+  const [avatarUrl, setAvatarUrl] = useState(null);
   const [imageAvatar, setImageAvatar]=useState(null);
-  const [arquivoSelecionado, setArquivoSelecionado] = useState();
+  const [arquivoSelecionado, setArquivoSelecionado] = useState(null);
   const history = useNavigate();
 
   useEffect(() => {
       
     async function fetchData(uid) {
-      console.log(uid)
+      //console.log(uid)
       const response = await fetch("http://127.0.0.1:8080/usuario/" + uid);
       const json = await response.json();
       setNome(json.name)
     }
     fetchData(uid)
-  }, [])
-
-  async function handleFile(e) {
-
-
-    
-  }
+    handleUpload(arquivoSelecionado)
+    exibeImagem(uid)
+  }, [arquivoSelecionado, avatarUrl])
 
   async function handleSave(e){
     e.preventDefault();
@@ -66,28 +62,47 @@ export default function Profile(){
 
   }
 
+  async function handleFile(e) {
+
+    setArquivoSelecionado(e.target.files[0])
+    //console.log(arquivoSelecionado)
+
+  }
+
   async function handleUpload(e){
-  
-    setArquivoSelecionado({ selectedFile: e.target.files[0] })
-    console.log(arquivoSelecionado)
+    
+    //console.log(arquivoSelecionado)
 
     const formData = new FormData();
-		formData.append('file', arquivoSelecionado.selectedFile);
 
-    const request = {
-      mode: 'cors',
-			method: 'POST',
-			body: formData
-      }
+    if (arquivoSelecionado !== null) {
 
-    const response = await fetch("http://127.0.0.1:8080/usuario/profile-picture/" + uid, request)
+      formData.append('file', arquivoSelecionado);
+
+      const request = {
+        mode: 'cors',
+        method: 'POST',
+        body: formData
+        }
+
+      const response = await fetch("http://127.0.0.1:8080/usuario/profile-picture/" + uid, request)
+    } else {
+      return
+    }
+
+  }
+
+  async function exibeImagem(uid) {
+
     const response_update = await fetch("http://127.0.0.1:8080/usuario/profile-picture/" + uid)
     const data_update = await response_update.json();
 
-    if(response.ok){ 
-      //console.log("Upload realizado")
-      toast.success("Upload realizado")
+    if(response_update.ok){ 
+      //loadAvatar(data_update.profile_pic)
+      setAvatarUrl("")
       setAvatarUrl("http://127.0.0.1:8080/static/" + data_update.profile_pic)
+    } else {
+      setAvatarUrl(null)
     }
 
   }
@@ -121,7 +136,7 @@ export default function Profile(){
                 <FiUpload color="#000" size={25} />
               </span>
 
-              <input type="file" accept="image/*" onChange={handleUpload}/><br/>
+              <input type="file" accept="image/*" onChange={handleFile}/><br/>
               { avatarUrl === null ? 
                 <img src={avatar} width="250" height="250" alt="Foto de perfil do usuario" />
                 :
