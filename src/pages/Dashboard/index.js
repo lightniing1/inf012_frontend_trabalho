@@ -83,7 +83,7 @@ export default function Dashboard(){
                   <td data-label="Status">
                     <span className="badge" style={{backgroundColor: '#5cb85c' }}>{chamado.status}</span>
                   </td>
-                  <td data-label="Cadastrado">20/06/2021</td>
+                  <td data-label="Cadastrado">{chamado.cadastro}</td>
                   <td data-label="#">
                     <button className="action" onClick={() => redirect(chamado, false)} style={{backgroundColor: '#3583f6' }}>
                       <FiSearch color="#FFF" size={17} />

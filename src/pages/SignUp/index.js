@@ -17,7 +17,7 @@ function SignUp() {
     	//console.log(loggedUser.uid)
       if (loggedUser && loggedUser.uid) {
         console.log(loggedUser && loggedUser.uid)
-        registerUserOnBackend(loggedUser.uid, nome)
+        registerUserOnBackend(loggedUser.uid, nome, loggedUser.email)
         history('/dashboard')
 		}
 
