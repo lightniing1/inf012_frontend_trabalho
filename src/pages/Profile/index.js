@@ -17,6 +17,7 @@ export default function Profile(){
   const [uid] = useState(loggedUser && loggedUser.uid);
   const [avatarUrl, setAvatarUrl] = useState(loggedUser && loggedUser.avatarUrl);
   const [imageAvatar, setImageAvatar]=useState(null);
+  const [arquivoSelecionado, setArquivoSelecionado] = useState();
   const history = useNavigate();
 
   useEffect(() => {
@@ -30,7 +31,9 @@ export default function Profile(){
     fetchData(uid)
   }, [])
 
-  function handleFile(e){
+  async function handleFile(e) {
+
+
     
   }
 
@@ -53,18 +56,35 @@ export default function Profile(){
     }
 
     const response_update = await fetch("http://127.0.0.1:8080/usuario/" + uid, request)
-    const data_update = await response_update.json();
+    //const data_update = await response_update.json();
 
     if(response_update.ok){
         console.log("Atualizado")
-        console.log(data_update)
+        //console.log(data_update)
     }
 
   }
 
-  async function handleUpload(){
-    
+  async function handleUpload(e){
+  
+    setArquivoSelecionado({ selectedFile: e.target.files[0] })
+    console.log(arquivoSelecionado)
 
+    const formData = new FormData();
+		formData.append('file', arquivoSelecionado.selectedFile);
+
+    const request = {
+      mode: 'cors',
+			method: 'POST',
+			body: formData
+      }
+
+    const response = await fetch("http://127.0.0.1:8080/usuario/profile-picture/" + uid, request)
+    //const data = await response.json();
+
+    if(response.ok){
+      console.log("Upload realizado")
+  }
 
   }
 
@@ -97,7 +117,7 @@ export default function Profile(){
                 <FiUpload color="#000" size={25} />
               </span>
 
-              <input type="file" accept="image/*" onChange={handleFile}/><br/>
+              <input type="file" accept="image/*" onChange={handleUpload}/><br/>
               { avatarUrl === null ? 
                 <img src={avatar} width="250" height="250" alt="Foto de perfil do usuario" />
                 :
